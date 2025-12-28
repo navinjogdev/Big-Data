@@ -29,7 +29,6 @@ sudo service hadoop-hdfs-secondarynamenode start
 hadoop fs -mkdir -p  /user/cloudera/
 hadoop fs -ls  /user/cloudera
 ==================================
-
 ```
 
 ## Mysql Commands
@@ -49,7 +48,6 @@ insert into zeyotab values(4,'vasu','bangalore');
 
 select * from zeyotab;
 quit;
-
 ```
 
 ## Sqoop Commands
@@ -83,7 +81,6 @@ insert into z2 values(2,'mobile');
 insert into z2 values(3,'laptop');
 insert into z2 values(4,'mouse');
 
-=====Validate Tables====
 select * from z1;
 select * from z2;
 quit
@@ -94,10 +91,8 @@ quit
 ```
 sqoop import --connect jdbc:mysql://localhost/zeyodb --username root --password cloudera --m 1  --delete-target-dir --target-dir /user/cloudera/joindir --query "select a.*,b.product from z1 a join z2 b on a.id=b.id where \$CONDITIONS"
 
-=====Validate Data====
 hadoop fs -ls /user/cloudera/joindir
 hadoop fs -cat /user/cloudera/joindir/part-m-00000
-
 ```
 
 # CLOUDERA INCREMENTAL
@@ -126,7 +121,6 @@ hadoop fs -cat /user/cloudera/indir/part-m-00000
 ```
 ## Mysql Commands
 ### Task 3
-
 ```
 mysql -uroot -pcloudera
 use zeyodb;
@@ -135,7 +129,6 @@ insert into zeyotab values(5,'rani','chennai','cash');
 insert into zeyotab values(6,'rita','delhi','credit');
 select * from zeyotab;
 quit
-
 ```
 ## SQOOP Incremental Import
 ### Task 3
@@ -145,14 +138,11 @@ sqoop import --connect jdbc:mysql://localhost/zeyodb --username root --password 
 
 hadoop fs -ls /user/cloudera/indir
 hadoop fs -cat /user/cloudera/indir/part-m-00001
-
 ```
 
 # Incremental Job Cloudera
 ## Mysql Commands
 ### Task 4
-
-
 ```
 mysql -uroot -pcloudera
 create database if not exists zeyodb;
@@ -173,11 +163,9 @@ quit
 ```
 cd
 echo -n cloudera>passfile
-
 sqoop job --delete zjob
 
 sqoop job --create zjob -- import --connect jdbc:mysql://localhost/zeyodb --username root --password-file file:///home/cloudera/passfile --table zeyojob --m 1 --target-dir /user/cloudera/jobdir --incremental append --check-column id --last-value 0
-
 ```
 
 ## Execute the Job and Validate
@@ -201,7 +189,6 @@ quit
 
 ## Execute the Job and Validate
 ### Task 4
-
 ```
 sqoop job --exec zjob
 hadoop fs -ls /user/cloudera/jobdir
