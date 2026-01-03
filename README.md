@@ -194,6 +194,26 @@ sqoop job --exec zjob
 hadoop fs -ls /user/cloudera/jobdir
 hadoop fs -cat /user/cloudera/jobdir/part-m-00001
 ```
+# Local Cloudera To S3 bucket
+## Mysql Commands
+### Task 5
 
+```
+hdfs dfsadmin -safemode leave
+mysql -uroot -pcloudera
+create database if not exists zdb;
+use zdb;
+drop table cust;
+create table cust(id int,name varchar(100));
+insert into cust value(1,'zeyo');
+insert into cust value(2,'analytics');
+select * from cust;
+quit
+```
 
+## SQOOP Command
+### Task 5
+```
+sqoop import -Dfs.s3a.access.key=<accessKey> -Dfs.s3a.secret.key=<secretKey> -Dfs.s3a.endpoint=<endpoint> --connect jdbc:mysql://localhost/zdb --username root --password cloudera --table cust --m 1 --target-dir  s3a://<s3BucketName>/<folderName>
+```
 
