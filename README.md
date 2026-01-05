@@ -217,3 +217,67 @@ quit
 sqoop import -Dfs.s3a.access.key=<accessKey> -Dfs.s3a.secret.key=<secretKey> -Dfs.s3a.endpoint=<endpoint> --connect jdbc:mysql://localhost/zdb --username root --password cloudera --table cust --m 1 --target-dir  s3a://<s3BucketName>/<folderName>
 ```
 
+# Cloudera -SERIALIZATION
+## Mysql Commands
+### Task 6
+```
+hdfs dfsadmin -safemode leave
+mysql -uroot -pcloudera
+create database if not exists zdb;
+use zdb;
+drop table cust;
+create table cust(id int,name varchar(100));
+insert into cust value(1,'zeyo');
+insert into cust value(2,'analytics');
+select * from cust;
+quit
+```
+
+## Sqoop Import
+### Task 6
+```
+sqoop import --connect jdbc:mysql://localhost/zdb --username root --password cloudera --table cust --m 1 --delete-target-dir  --target-dir  /user/cloudera/pardir --as-parquetfile
+```
+## Validate Data Import
+### Task 6
+```
+hadoop   fs   -ls    /user/cloudera/pardir
+hadoop   fs    -cat   /user/cloudera/pardir/*
+```
+
+# 2 Mapper 
+## Mysql Commands
+### Task 7
+```
+mysql -uroot -pcloudera
+create database mcheck;
+use mcheck;
+drop table if exists mtab;
+create table mtab(id int,name varchar(100),amount int);
+insert into mtab values(1,'zeyo',40);
+insert into mtab values(2,'vasu',50);
+insert into mtab values(3,'rani',70);
+insert into mtab values(4,'vani',40);
+insert into mtab values(5,'hema',50);
+insert into mtab values(6,'hari',70);
+insert into mtab values(7,'raki',40);
+insert into mtab values(8,'vira',50);
+insert into mtab values(9,'rupa',70);
+insert into mtab values(10,'Siji',40);
+insert into mtab values(11,'rapo',50);
+insert into mtab values(12,'visu',70);
+select * from mtab;
+
+quit
+```
+## Sqoop Import
+### Task 7
+```
+sqoop import --connect jdbc:mysql://localhost/mcheck --username root --password cloudera --table mtab --m 2 --split-by id --delete-target-dir --target-dir /user/cloudera/mdata2
+
+hadoop fs -ls /user/cloudera/mdata2/ 
+
+hadoop fs -cat  /user/cloudera/mdata2/part-m-00000 
+
+hadoop fs -cat  /user/cloudera/mdata2/part-m-00001
+```
