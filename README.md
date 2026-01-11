@@ -281,3 +281,48 @@ hadoop fs -cat  /user/cloudera/mdata2/part-m-00000
 
 hadoop fs -cat  /user/cloudera/mdata2/part-m-00001
 ```
+
+# hive 
+## Mysql Commands
+### Task 8
+
+```
+create database   pdb;
+use pdb;
+create table  ptab(id int);
+```
+## Test it from hive
+### Task 8
+
+```
+!hadoop   fs   -ls   /user/hive/warehouse/;
+!hadoop   fs   -ls   /user/hive/warehouse/pdb.db/;
+```
+
+# Cloudera Edge Node 
+## Mysql Commands
+### Task 9
+
+```
+cd
+echo 1,zeyo,40 > zfile
+echo 2,ravi,70 >> zfile
+echo 3,rani,70 >> zfile
+```
+
+## hive
+### Task 9
+```
+drop database if exists zdb cascade;
+create database if not exists zdb;
+use zdb;
+create table ztab(id int,name string,amt int) row format delimited fields terminated by ',';
+load data local inpath '/home/cloudera/zfile'  into table ztab;
+select * from ztab;
+select * from ztab where id>1;
+```
+## validate in HIVE SHELL ITSELF
+### Task 9
+```
+!hadoop    fs   -ls    /user/hive/warehouse/zdb.db/ztab;
+```
