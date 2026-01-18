@@ -55,8 +55,8 @@ quit;
 ```
 sqoop import --connect jdbc:mysql://localhost/zeyodb --username root --password cloudera --m 1 --table zeyotab --delete-target-dir --target-dir /user/cloudera/firstimport
 
-hadoop   fs   -ls     /user/cloudera/firstimport
-hadoop   fs   -cat    /user/cloudera/firstimport/part-m-00000
+hadoop fs -ls /user/cloudera/firstimport
+hadoop fs -cat /user/cloudera/firstimport/part-m-00000
 
 ```
 ## Mysql Commands Two Table creation
@@ -241,8 +241,8 @@ sqoop import --connect jdbc:mysql://localhost/zdb --username root --password clo
 ## Validate Data Import
 ### Task 6
 ```
-hadoop   fs   -ls    /user/cloudera/pardir
-hadoop   fs    -cat   /user/cloudera/pardir/*
+hadoop fs -ls /user/cloudera/pardir
+hadoop fs -cat /user/cloudera/pardir/*
 ```
 
 # 2 Mapper 
@@ -295,12 +295,12 @@ create table  ptab(id int);
 ### Task 8
 
 ```
-!hadoop   fs   -ls   /user/hive/warehouse/;
-!hadoop   fs   -ls   /user/hive/warehouse/pdb.db/;
+!hadoop fs -ls /user/hive/warehouse/;
+!hadoop fs -ls /user/hive/warehouse/pdb.db/;
 ```
 
 # Cloudera Edge Node 
-## Mysql Commands
+## Commands
 ### Task 9
 
 ```
@@ -324,5 +324,68 @@ select * from ztab where id>1;
 ## validate in HIVE SHELL ITSELF
 ### Task 9
 ```
-!hadoop    fs   -ls    /user/hive/warehouse/zdb.db/ztab;
+!hadoop fs -ls /user/hive/warehouse/zdb.db/ztab;
 ```
+
+
+# Manualy copy the file to HDFS and run hive query get the data
+## Commands
+### Task 10
+```
+cd
+echo 1,zeyo,40 > zfile
+echo 2,ravi,70 >> zfile
+echo 3,rani,70 >> zfile
+hadoop fs -mkdir /user/cloudera/ddir
+hadoop fs -put /home/cloudera/zfile  /user/cloudera/ddir/
+```
+
+## Hive
+### Task 10
+```
+hive   # -- type and enter
+drop database if exists ldb cascade;
+create database if not exists ldb;
+use ldb;
+create table ltab(id int,name string,amt int) row format delimited fields terminated by ',' location '/user/cloudera/ddir';
+select * from ltab;
+select * from ltab where id > 1;
+quit;
+```
+
+# Types of tables (managed)
+## Commands
+### Task 11
+```
+cd
+echo 1,sai>zfile
+echo 2,vas>>zfile
+hadoop fs -mkdir /user/cloudera/mdir
+hadoop fs -mkdir /user/cloudera/edir
+hadoop fs -put zfile /user/cloudera/mdir
+hadoop fs -put zfile /user/cloudera/edir
+```
+
+## Hive
+### Task 11
+```
+hive
+drop database if exists tabcheck cascade;
+create database if not exists tabcheck;
+use tabcheck;
+
+create table mtab(id int,name string) row format delimited fields terminated by ',' location '/user/cloudera/mdir';
+create external table etab(id int,name string) row format delimited fields terminated by ',' location '/user/cloudera/edir';
+
+describe formatted mtab;
+describe formatted etab;
+
+select * from mtab;
+select * from etab;
+
+drop table mtab;
+drop table etab;
+
+!hadoop fs -ls /user/cloudera/;
+```
+
